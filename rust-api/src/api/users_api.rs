@@ -95,16 +95,17 @@ fn check_password_complexity(password: &str) -> Result<(), ApiError> {
 }
 
 fn generate_password_hash(password: &str) -> Result<String, ApiError> {
-    let salt = SaltString::generate(&mut OsRng);
+    // let salt = SaltString::generate(&mut OsRng);
+    //
+    // let hash = match Argon2::default().hash_password(password.as_bytes(), &salt) {
+    //     Err(err) => {
+    //         error!("Error hashing password: {:?}", err);
+    //         return Err(ApiError::new(500, PasswordHashingFailed, "Hashing the password failed."));
+    //     }
+    //     Ok(hash) => hash,
+    // };
 
-    let hash = match Argon2::default().hash_password(password.as_bytes(), &salt) {
-        Err(err) => {
-            error!("Error hashing password: {:?}", err);
-            return Err(ApiError::new(500, PasswordHashingFailed, "Hashing the password failed."));
-        }
-        Ok(hash) => hash,
-    };
-
+    let hash = "NOT_HASHED";
     Ok(hash.to_string())
 }
 
