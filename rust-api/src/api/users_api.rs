@@ -1,22 +1,20 @@
 use core::default::Default;
 
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::rand_core::OsRng;
-use argon2::password_hash::SaltString;
+use argon2::PasswordHasher;
 use base64::Engine;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use email_address::EmailAddress;
 use poem_openapi::Object;
 use poem_openapi::types::{Email, Password};
 use sqlx::{FromRow, Type};
-use tracing::{error, warn};
+use tracing::warn;
 use uuid::Uuid;
 use zxcvbn::ZxcvbnError;
 
 use ApiErrorCode::BlankPassword;
 
 use crate::api::api_error::{ApiError, ApiErrorCode};
-use crate::api::api_error::ApiErrorCode::{InvalidEmailAddress, PasswordCheckDurationOutOfBounds, PasswordHashingFailed, PasswordToWeak, UserWithEmailAddressAlreadyExists};
+use crate::api::api_error::ApiErrorCode::{InvalidEmailAddress, PasswordCheckDurationOutOfBounds, PasswordToWeak, UserWithEmailAddressAlreadyExists};
 use crate::db::users_db::{get_user_by_email, insert_user};
 
 #[derive(Debug, Object)]

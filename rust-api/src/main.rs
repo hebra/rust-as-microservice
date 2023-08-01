@@ -1,6 +1,6 @@
-use std::{env};
-use async_once::AsyncOnce;
+use std::env;
 
+use async_once::AsyncOnce;
 use dotenv::dotenv;
 use lazy_static::lazy_static;
 use poem::listener::TcpListener;
@@ -10,12 +10,18 @@ use poem_openapi::OpenApiService;
 use sqlx::{Sqlite, SqlitePool};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::sqlite::SqlitePoolOptions;
-use tracing::{info};
+use tracing::info;
 
 use crate::api::spec::Api;
 
 mod api;
 mod db;
+
+lazy_static! {
+      static ref DB_POOL: AsyncOnce<SqlitePool> = AsyncOnce::new(async {
+        init_database().await
+    });
+}
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
@@ -37,14 +43,6 @@ async fn main() -> Result<(), std::io::Error> {
         .await
 }
 
-
-lazy_static! {
-      static ref DB_POOL: AsyncOnce<SqlitePool> = AsyncOnce::new(async {
-        init_database().await
-    });
-}
-
-
 async fn init_database() -> SqlitePool {
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
 
@@ -53,9 +51,17 @@ async fn init_database() -> SqlitePool {
         Sqlite::create_database(&db_url).await.expect("Unable to create database file");
     }
 
-    SqlitePoolOptions::new()
+    let pool = SqlitePoolOptions::new()
         .max_connections(5)
         .connect(db_url.as_str())
         .await
-        .expect("Unable to connect to database file.")
+        .expect("Unable to connect to database file.");
+
+    let count: i64 = sqlx::query_scalar("SELECT COUNT(1) FROM users")
+        .fetch_one(&pool)
+        .await.unwrap();
+
+    info!("Current rows in users table: {:?}", count);
+
+    pool
 }
