@@ -10,7 +10,7 @@ use poem_openapi::OpenApiService;
 use sqlx::{Sqlite, SqlitePool};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::sqlite::SqlitePoolOptions;
-use tracing::info;
+use tracing::{info, warn};
 
 use crate::api::spec::Api;
 
@@ -28,9 +28,15 @@ async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
     dotenv().ok();
+    let disable_password_hashing = env::var("DISABLE_PASSWORD_HASHING")
+                                    .or::<String>(Ok("false".to_string())).unwrap().eq_ignore_ascii_case("true");
+
+    if disable_password_hashing {
+        warn!("WARNING WARNING WARNING: Password hashing is disabled.");
+    }
 
     let api_service =
-        OpenApiService::new(Api, "Gymergy REST API", "1.0").server("http://localhost:3000/api");
+        OpenApiService::new(Api{disable_password_hashing}, "Gymergy REST API", "1.0").server("http://localhost:3000/api");
 
     let ui = api_service.rapidoc();
 

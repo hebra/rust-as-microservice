@@ -1,20 +1,22 @@
 use core::default::Default;
+use argon2::password_hash::rand_core::OsRng;
+use argon2::password_hash::SaltString;
 
-use argon2::PasswordHasher;
+use argon2::{Argon2, PasswordHasher};
 use base64::Engine;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use email_address::EmailAddress;
 use poem_openapi::Object;
 use poem_openapi::types::{Email, Password};
 use sqlx::{FromRow, Type};
-use tracing::warn;
+use tracing::{error, warn};
 use uuid::Uuid;
 use zxcvbn::ZxcvbnError;
 
 use ApiErrorCode::BlankPassword;
 
 use crate::api::api_error::{ApiError, ApiErrorCode};
-use crate::api::api_error::ApiErrorCode::{InvalidEmailAddress, PasswordCheckDurationOutOfBounds, PasswordToWeak, UserWithEmailAddressAlreadyExists};
+use crate::api::api_error::ApiErrorCode::{InvalidEmailAddress, PasswordCheckDurationOutOfBounds, PasswordHashingFailed, PasswordToWeak, UserWithEmailAddressAlreadyExists};
 use crate::db::users_db::{get_user_by_email, insert_user};
 
 #[derive(Debug, Object)]
@@ -35,7 +37,7 @@ pub struct User {
     pub terms_accepted: bool,
 }
 
-pub async fn create_user(signup_user: SignupUser) -> Result<User, ApiError> {
+pub async fn create_user(signup_user: SignupUser, disable_password_hashing: &bool) -> Result<User, ApiError> {
     match check_email_address_validity(signup_user.email.as_str()) {
         Err(err) => return Err(err),
         Ok(_) => ()
@@ -56,7 +58,7 @@ pub async fn create_user(signup_user: SignupUser) -> Result<User, ApiError> {
             None => {
                 let userid = BASE64_STANDARD_NO_PAD.encode(Uuid::new_v4().to_string());
 
-                let user = match generate_password_hash(signup_user.password.as_str()) {
+                let user = match generate_password_hash(signup_user.password.as_str(), disable_password_hashing) {
                     Err(err) => return Err(err),
                     Ok(password_hash) => User { userid, email: signup_user.email.to_string(), password_hash, terms_accepted: signup_user.terms_accepted },
                 };
@@ -92,18 +94,21 @@ fn check_password_complexity(password: &str) -> Result<(), ApiError> {
     };
 }
 
-fn generate_password_hash(password: &str) -> Result<String, ApiError> {
-    // let salt = SaltString::generate(&mut OsRng);
-    //
-    // let hash = match Argon2::default().hash_password(password.as_bytes(), &salt) {
-    //     Err(err) => {
-    //         error!("Error hashing password: {:?}", err);
-    //         return Err(ApiError::new(500, PasswordHashingFailed, "Hashing the password failed."));
-    //     }
-    //     Ok(hash) => hash,
-    // };
+fn generate_password_hash(password: &str, disable_password_hashing: &bool) -> Result<String, ApiError> {
+    if *disable_password_hashing {
+        return Ok(password.to_string());
+    }
 
-    let hash = "NOT_HASHED";
+    let salt = SaltString::generate(&mut OsRng);
+
+    let hash = match Argon2::default().hash_password(password.as_bytes(), &salt) {
+        Err(err) => {
+            error!("Error hashing password: {:?}", err);
+            return Err(ApiError::new(500, PasswordHashingFailed, "Hashing the password failed."));
+        }
+        Ok(hash) => hash,
+    };
+
     Ok(hash.to_string())
 }
 
