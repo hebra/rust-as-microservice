@@ -1,5 +1,6 @@
 use poem_openapi::{ApiResponse, OpenApi};
 use poem_openapi::payload::Json;
+use sqlx::SqlitePool;
 
 use crate::api::api_error::ApiError;
 use crate::api::users_api::{create_user, SignupUser, User};
@@ -13,14 +14,15 @@ enum CreateUserResponse {
 }
 
 pub struct Api {
-    pub disable_password_hashing: bool
+    pub disable_password_hashing: bool,
+    pub db_pool: SqlitePool
 }
 
 #[OpenApi]
 impl Api {
     #[oai(path = "/users", method = "post")]
     async fn create_user(&self, payload: Json<SignupUser>) -> CreateUserResponse {
-        match create_user(payload.0, &self.disable_password_hashing).await {
+        match create_user(payload.0, &self.disable_password_hashing, &self.db_pool).await {
             Ok(user) => CreateUserResponse::Ok(Json(user)),
             Err(err) => CreateUserResponse::BadRequest(Json(err))
         }

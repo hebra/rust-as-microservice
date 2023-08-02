@@ -8,7 +8,7 @@ use base64::prelude::BASE64_STANDARD_NO_PAD;
 use email_address::EmailAddress;
 use poem_openapi::Object;
 use poem_openapi::types::{Email, Password};
-use sqlx::{FromRow, Type};
+use sqlx::{FromRow, SqlitePool, Type};
 use tracing::{error, warn};
 use uuid::Uuid;
 use zxcvbn::ZxcvbnError;
@@ -37,7 +37,7 @@ pub struct User {
     pub terms_accepted: bool,
 }
 
-pub async fn create_user(signup_user: SignupUser, disable_password_hashing: &bool) -> Result<User, ApiError> {
+pub async fn create_user(signup_user: SignupUser, disable_password_hashing: &bool, db_pool: &SqlitePool) -> Result<User, ApiError> {
     match check_email_address_validity(signup_user.email.as_str()) {
         Err(err) => return Err(err),
         Ok(_) => ()
@@ -48,12 +48,12 @@ pub async fn create_user(signup_user: SignupUser, disable_password_hashing: &boo
         Ok(_) => ()
     }
 
-    match get_user_by_email(signup_user.email.as_str()).await {
-        Err(err) => return Err(err),
+    return match get_user_by_email(signup_user.email.as_str(), db_pool).await {
+        Err(err) => Err(err),
         Ok(user_opt) => match user_opt {
             Some(user) => {
                 warn!("User already exists: {:?}", user.email);
-                return Err(ApiError::new(400, UserWithEmailAddressAlreadyExists, format!("User with email {:?} already exists.", signup_user.email).as_str()));
+                Err(ApiError::new(400, UserWithEmailAddressAlreadyExists, format!("User with email {:?} already exists.", signup_user.email).as_str()))
             }
             None => {
                 let userid = BASE64_STANDARD_NO_PAD.encode(Uuid::new_v4().to_string());
@@ -63,10 +63,10 @@ pub async fn create_user(signup_user: SignupUser, disable_password_hashing: &boo
                     Ok(password_hash) => User { userid, email: signup_user.email.to_string(), password_hash, terms_accepted: signup_user.terms_accepted },
                 };
 
-                return match insert_user(user).await {
+                match insert_user(user, db_pool).await {
                     Ok(user) => Ok(user),
                     Err(err) => Err(err)
-                };
+                }
             }
         }
     }

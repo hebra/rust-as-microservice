@@ -1,8 +1,6 @@
 use std::env;
 
-use async_once::AsyncOnce;
 use dotenv::dotenv;
-use lazy_static::lazy_static;
 use poem::listener::TcpListener;
 use poem_openapi::__private::poem;
 use poem_openapi::__private::poem::Route;
@@ -17,11 +15,6 @@ use crate::api::spec::Api;
 mod api;
 mod db;
 
-lazy_static! {
-      static ref DB_POOL: AsyncOnce<SqlitePool> = AsyncOnce::new(async {
-        init_database().await
-    });
-}
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
@@ -35,8 +28,13 @@ async fn main() -> Result<(), std::io::Error> {
         warn!("WARNING WARNING WARNING: Password hashing is disabled.");
     }
 
+    let api = Api {
+        disable_password_hashing,
+        db_pool: init_database().await
+    };
+
     let api_service =
-        OpenApiService::new(Api{disable_password_hashing}, "Gymergy REST API", "1.0").server("http://localhost:3000/api");
+        OpenApiService::new(api, "Gymergy REST API", "1.0").server("http://localhost:3000/api");
 
     let ui = api_service.rapidoc();
 
@@ -52,10 +50,7 @@ async fn main() -> Result<(), std::io::Error> {
 async fn init_database() -> SqlitePool {
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
 
-    if !Sqlite::database_exists(&db_url).await.expect("") {
-        info!("New database file created {:?}", db_url);
-        Sqlite::create_database(&db_url).await.expect("Unable to create database file");
-    }
+    Sqlite::database_exists(&db_url).await.expect("Database not found. Use sqlx CLI to create and migrate database.");
 
     let pool = SqlitePoolOptions::new()
         .max_connections(5)

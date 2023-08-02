@@ -7,12 +7,25 @@
 # Performance numbers
 
 
-# Rust
+# Rust (release build)
 Total execution time for 1000000 requests: 387.388836795s (~6:45 min)
 Min request time: 237.958µs
 Max request time: 29.220334ms
 Avg request time: 387.388µs
 Median request time: 328.167µs
+
+Total execution time for 10000 requests: 2.702996538s
+Min request time: 195.583µs
+Max request time: 19.207625ms
+Avg request time: 270.299µs
+Median request time: 258.333µs
+
+# Rust (debug build)
+Total execution time for 10000 requests: 19.578517991s
+Min request time: 1.835958ms
+Max request time: 93.613666ms
+Avg request time: 1.957851ms
+Median request time: 1.907625ms
 
 
 # Java (Spring Boot, Hibernate, Tomcat)
