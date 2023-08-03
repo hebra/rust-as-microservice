@@ -14,6 +14,12 @@ Max request time: 29.220334ms
 Avg request time: 387.388µs
 Median request time: 328.167µs
 
+Total execution time for 999999 requests: 325.594397023s (~5:41 min)
+Min request time: 197.875µs
+Max request time: 31.898333ms
+Avg request time: 325.594µs
+Median request time: 272.917µs
+
 Total execution time for 10000 requests: 2.702996538s
 Min request time: 195.583µs
 Max request time: 19.207625ms
@@ -41,3 +47,17 @@ Min request time: 1.008792ms
 Max request time: 195.077084ms
 Avg request time: 2.076224ms
 Median request time: 1.604583ms
+
+# Go (release binary, file-based SQLite)
+Total execution time for 1000000 requests: 872.868440764s (~14:53 min)
+Min request time: 643.083µs
+Max request time: 997.49425ms
+Avg request time: 872.868µs
+Median request time: 769.333µs
+
+# Go (release build, in-memory SQLite)
+Total execution time for 1000000 requests: 811.703522364s (~13:51 min)
+Min request time: 626.042µs
+Max request time: 44.212042ms
+Avg request time: 811.703µs
+Median request time: 751.5µs

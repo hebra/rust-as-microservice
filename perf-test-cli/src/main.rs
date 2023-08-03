@@ -38,11 +38,15 @@ async fn main() -> Result<(), Error> {
 
     let mut request_times: Vec<Duration> = Vec::new();
 
-    for name in generate_names(total_requests) {
+    for (i, name) in generate_names(total_requests).iter().enumerate() {
         match post_user(&client, &url, name).await {
             Ok(dur) => request_times.push(dur),
             Err(err) => error!("{:?}", err)
         }
+
+        // if i % 1000 == 0 {
+        //     info!("Progress {:?}", i);
+        // }
     }
 
     result_summary(&mut request_times);
@@ -50,7 +54,7 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn post_user(client: &Client, url: &String, name: String) -> Result<Duration, Error> {
+async fn post_user(client: &Client, url: &String, name: &String) -> Result<Duration, Error> {
     let json_data = format!(r#"{{"email": "{name}@example.com","password": "X1dxx_35FdfsgJ]","terms_accepted": true}}"#);
 
     let start = Instant::now();
