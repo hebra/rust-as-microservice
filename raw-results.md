@@ -61,3 +61,10 @@ Min request time: 626.042µs
 Max request time: 44.212042ms
 Avg request time: 811.703µs
 Median request time: 751.5µs
+
+# Node Express 
+Total execution time for 1000000 requests: 978.544048653s (~16:30 min)
+Min request time: 681.875µs
+Max request time: 72.223917ms
+Avg request time: 978.544µs
+Median request time: 825.667µs
