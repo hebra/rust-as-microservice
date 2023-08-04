@@ -39,8 +39,16 @@ app.post('/api/users', (req, res) => {
         return
     }
 
-    db.get("SELECT count(1) as count FROM users", [], (err, row) => {
+    db.get("SELECT count(1) as count FROM users WHERE email=?", [signupUser.email], (err, row) => {
+        if (err) {
+            console.error(err)
+            res.status(500)
+            res.send("Error counting rows")
+            return
+        }
+
         if (row.count > 0) {
+            console.warn("Users exists", signupUser.email)
             res.status(400)
             res.send("User already exists")
             return
