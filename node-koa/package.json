@@ -1,0 +1,22 @@
+{
+  "name": "ram-poc-node-koa",
+  "version": "1.0.0",
+  "description": "Node REST service for the Rust-as-microservice POC",
+  "main": "appKoa.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node appKoa.js"
+  },
+  "author": "Hendrik Brandt <hendrik.brandt@digio.com.au>",
+  "license": "ISC",
+  "dependencies": {
+    "deep-email-validator": "^0.1.21",
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^12.0.0",
+    "promised-sqlite3": "^2.1.0",
+    "sqlite3": "^5.1.6",
+    "uuid": "^9.0.0",
+    "zxcvbn": "^4.4.2"
+  }
+}
