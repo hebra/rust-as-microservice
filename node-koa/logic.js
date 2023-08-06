@@ -27,8 +27,8 @@ const getDb = async () => {
 const addUser = async (body) => {
   const signupUser = new SignupUser(body)
   const db = await getDb();
-    // if (!emailRegexp.test(signupUser.email)){
-    if (!emailValidator.validate(signupUser.email)) {
+    if (!emailRegexp.test(signupUser.email)){
+    // if (!emailValidator.validate(signupUser.email)) {
       throw new Error("Invalid email address format");
     }
 
