@@ -1,0 +1,12 @@
+{
+  "name": "ram-poc-node-hapi",
+  "version": "1.0.0",
+  "description": "Node REST service for the Rust-as-microservice POC using the Hapi library",
+  "main": "appHapi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node appHapi.js"
+  },
+  "author": "Hendrik Brandt <hendrik.brandt@digio.com.au>",
+  "license": "ISC"
+}
