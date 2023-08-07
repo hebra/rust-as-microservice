@@ -33,11 +33,6 @@ async fn main() -> Result<(), std::io::Error> {
         db_pool: init_database().await
     };
 
-    let x = Ok("");
-
-    x.unwrap()
-
-
     let api_service =
         OpenApiService::new(api, "Gymergy REST API", "1.0").server("http://localhost:3000/api");
 

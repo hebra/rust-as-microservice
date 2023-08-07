@@ -68,3 +68,10 @@ Min request time: 681.875µs
 Max request time: 72.223917ms
 Avg request time: 978.544µs
 Median request time: 825.667µs
+
+# Node Koa
+Total execution time for 1000000 requests: 775.911226477s (~12.08 min)
+Min request time: 613.792µs
+Max request time: 29.1275ms
+Avg request time: 775.911µs
+Median request time: 708.083µs
