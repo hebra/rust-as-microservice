@@ -8,5 +8,12 @@
     "start": "node appHapi.js"
   },
   "author": "Hendrik Brandt <hendrik.brandt@digio.com.au>",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^21.3.2",
+    "deep-email-validator": "^0.1.21",
+    "promised-sqlite3": "^2.1.0",
+    "uuid": "^9.0.0",
+    "zxcvbn": "^4.4.2"
+  }
 }

@@ -44,9 +44,9 @@ async fn main() -> Result<(), Error> {
             Err(err) => error!("{:?}", err)
         }
 
-        // if i % 1000 == 0 {
-        //     info!("Progress {:?}", i);
-        // }
+        if i % 1000 == 0 {
+            info!("Progress {:?}", i);
+        }
     }
 
     result_summary(&mut request_times);
