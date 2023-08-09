@@ -41,12 +41,48 @@ Max request time: 222.552917ms
 Avg request time: 2.707453ms  
 Median request time: 2.03925ms  
 
-# Java (Spring Boot, Hibernate, Undertow)
+# Java (Spring Boot, Hibernate, Undertow, OpenJDK)
 Total execution time for 10000 requests: 20.762249658s  
 Min request time: 1.008792ms  
 Max request time: 195.077084ms  
 Avg request time: 2.076224ms  
 Median request time: 1.604583ms  
+
+# Java (Spring Boot, pure JDBC, GraalVM non-native)
+Total execution time for 1000000 requests: 505.483530755s (8:42 min)
+Min request time: 349µs
+Max request time: 81.126625ms
+Avg request time: 505.483µs
+Median request time: 426.709µs
+
+# Java (Spring Boot, pure JDBC, OpenJDK)
+Total execution time for 1000000 requests: 617.477230381s (10:29 min)
+Min request time: 351.375µs
+Max request time: 111.861708ms
+Avg request time: 617.477µs
+Median request time: 489.125µs
+
+# Java (Spring Boot, pure JDBC, OpenJDK, no Zxcvbn)
+Total execution time for 1000000 requests: 254.37222998s (4:14 min)
+Min request time: 135.125µs
+Max request time: 109.73825ms
+Avg request time: 254.372µs
+Median request time: 178.458µs
+
+# Java (Spring Boot, pure JDBC, GraalVM non-native, no Zxcvbn)
+Total execution time for 1000000 requests: 266.730708424s (4:26 min)
+Min request time: 133.583µs
+Max request time: 89.0385ms
+Avg request time: 266.73µs
+Median request time: 184.708µs
+
+# Java (Spring Boot, pure JDBC, GraalVM native, no Zxcvbn)
+Total execution time for 1000000 requests: 227.118148435s (3:47 min)
+Min request time: 85.833µs
+Max request time: 39.9165ms
+Avg request time: 227.118µs
+Median request time: 146.584µs
+
 
 # Go (release binary, file-based SQLite)
 Total execution time for 1000000 requests: 872.868440764s (~14:53 min)  
