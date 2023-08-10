@@ -7,6 +7,7 @@ use names::{Generator, Name};
 use reqwest::{Client, Error};
 use reqwest::header::{CONTENT_TYPE, HeaderMap};
 use serde::{Deserialize, Serialize};
+use simple_bar::ProgressBar;
 use tokio::time::Instant;
 use tracing::{error, info};
 
@@ -24,7 +25,7 @@ async fn main() -> Result<(), Error> {
 
     dotenv().ok();
     let url = env::var("USERS_API_URL").expect(".env variable USERS_API_URL not set.");
-    let total_requests = env::var("TOTAL_REQUESTS").expect(".env variable TOTAL_REQUESTS not set.").parse().unwrap();
+    let total_requests: u32 = env::var("TOTAL_REQUESTS").expect(".env variable TOTAL_REQUESTS not set.").parse().unwrap();
 
     info!("Using API URL {:?}", &url);
 
@@ -38,15 +39,14 @@ async fn main() -> Result<(), Error> {
 
     let mut request_times: Vec<Duration> = Vec::new();
 
-    for (i, name) in generate_names(total_requests).iter().enumerate() {
+    let mut bar = ProgressBar::default(total_requests.clone(), 50, false);
+
+    for name in generate_names(total_requests).iter() {
         match post_user(&client, &url, name).await {
             Ok(dur) => request_times.push(dur),
             Err(err) => error!("{:?}", err)
         }
-
-        // if i % 1000 == 0 {
-        //     info!("Progress {:?}", i);
-        // }
+        bar.update();
     }
 
     result_summary(&mut request_times);
@@ -68,7 +68,7 @@ async fn post_user(client: &Client, url: &String, name: &String) -> Result<Durat
     Ok(start.elapsed())
 }
 
-fn generate_names(total_requests: i32) -> Vec<String> {
+fn generate_names(total_requests: u32) -> Vec<String> {
     info!("Generating list of names.");
     let mut generator = Generator::with_naming(Name::Numbered);
     let mut names: Vec<String> = Vec::new();
