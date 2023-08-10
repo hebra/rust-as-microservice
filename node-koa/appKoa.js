@@ -20,7 +20,7 @@ router
         ctx.response.status = 400;  
       }
 
-      ctx.response.body= { message: error.message}
+      ctx.response.body = { message: error.message}
     }
     
   })

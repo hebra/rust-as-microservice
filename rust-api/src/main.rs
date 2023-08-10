@@ -8,12 +8,11 @@ use poem_openapi::OpenApiService;
 use sqlx::{Sqlite, SqlitePool};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::sqlite::SqlitePoolOptions;
-use tracing::{info, warn};
+use tracing::{info};
 
 use crate::api::spec::Api;
 
 mod api;
-mod db;
 
 
 #[tokio::main]
@@ -21,15 +20,8 @@ async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
     dotenv().ok();
-    let disable_password_hashing = env::var("DISABLE_PASSWORD_HASHING")
-                                    .or::<String>(Ok("false".to_string())).unwrap().eq_ignore_ascii_case("true");
-
-    if disable_password_hashing {
-        warn!("WARNING WARNING WARNING: Password hashing is disabled.");
-    }
 
     let api = Api {
-        disable_password_hashing,
         db_pool: init_database().await
     };
 
