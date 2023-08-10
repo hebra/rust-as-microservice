@@ -89,7 +89,7 @@ Total execution time for 1000000 requests: 872.868440764s (~14:53 min)
 Min request time: 643.083µs
 Max request time: 997.49425ms
 Avg request time: 872.868µs
-Median request time: 769.333µs
+Median request time: 769.333µ
 
 # Go (release build, in-memory SQLite)
 Total execution time for 1000000 requests: 811.703522364s (~13:51 min)
