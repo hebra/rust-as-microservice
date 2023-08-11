@@ -8,45 +8,20 @@ application:
 server:
   port: ${override.port:3000}
 
-
-
-# -------------------------------------------------------------------------------------------------------------------
-#  Info
-# -------------------------------------------------------------------------------------------------------------------
-info:
-  build:
-    commit: '@BUILD_COMMIT@'
-    date: '@BUILD_DATE@'
-    id: '@BUILD_ID@'
-    url: '@BUILD_URL@'
-    version: '@revision@'
-  datasource:
-    url: ${datasource.delivery.url}
-  environment:
-    instance: ${environment.instance}
-    system: ${environment.system}
-
 # -------------------------------------------------------------------------------------------------------------------
 #  Spring Configuration
 # -------------------------------------------------------------------------------------------------------------------
 spring:
   jpa:
     database-platform: org.hibernate.community.dialect.SQLiteDialect
-#  application:
-#    name: delivery-master-data-service
-#  webflux:
-#    base-path: /delivery-master-data-service
   datasource:
-#    url: jdbc:sqlite:ram-poc-java.db
     url: jdbc:sqlite:poc.db
-#    /usr/bin/sqlite3 poc.db
     username: sa
     password: sa
     driverClassName: org.sqlite.JDBC
     hikari:
       dataSourceProperties:
         connectionTestQuery: SELECT 1
-#        connectionClass: com.informix.jdbc.ValidationThreadSharingIfxSqliConnect
       connection-timeout: 30000
       maximum-pool-size: 10
       minimum-idle: 0
@@ -54,26 +29,3 @@ spring:
       max-lifetime: 1800000
       leakDetectionThreshold: 60000
       pool-name: hikari-cp
-  data:
-    redis:
-      repositories:
-        enabled: false
-
-# -------------------------------------------------------------------------------------------------------------------
-#  OpenAPI Configuration
-# -------------------------------------------------------------------------------------------------------------------
-openapi:
-  api-info:
-    description: Provides REST API for the Delivery Master Data Services
-    team-name: Delivery Management
-    title: Delivery Master Data Services REST API
-#  base-package-to-scan: au.com.reece.dms.masterdata.controller
-
-#############################################################################################################
-# Services
-#############################################################################################################
-web:
-  path:
-    mappings:
-      '[/version.json]': /manage/info
-
