@@ -1,0 +1,31 @@
+# -------------------------------------------------------------------------------------------------------------------
+# Application Properties
+# -------------------------------------------------------------------------------------------------------------------
+application:
+  identifier: Delivery Master Data Service
+
+
+server:
+  port: ${override.port:3000}
+
+# -------------------------------------------------------------------------------------------------------------------
+#  Spring Configuration
+# -------------------------------------------------------------------------------------------------------------------
+spring:
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+  datasource:
+    url: jdbc:sqlite:poc.db
+    username: sa
+    password: sa
+    driverClassName: org.sqlite.JDBC
+    hikari:
+      dataSourceProperties:
+        connectionTestQuery: SELECT 1
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 0
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leakDetectionThreshold: 60000
+      pool-name: hikari-cp
